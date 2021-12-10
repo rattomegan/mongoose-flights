@@ -3,6 +3,16 @@ const mongoose = require('mongoose');
 // This is an optional shorcut to the mongoose.Schema
 const Schema = mongoose.Schema;
 
+const destinationSchema = new Schema({
+  airport: {
+    type: String,
+    enum: ['AUS', 'DFW', 'DEN', 'LAX', 'SAN'],
+  },
+  arrival: {
+    type: Date
+  }
+});
+
 const flightSchema = new Schema({
   airline: {
     type: String,
@@ -20,12 +30,13 @@ const flightSchema = new Schema({
   },
   departs: {
     type: Date,
-    // not sure if I need this timestamp - i dnot think I do since my one year from now owrks.
-    timestamps: true,
     default: function() {
-      return new Date().getFullYear() + 1
+      var oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+      return oneYearFromNow; 
     }
   },
+  destinations: [destinationSchema]
 });
 
 module.exports = mongoose.model('Flight', flightSchema);
